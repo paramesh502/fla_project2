@@ -109,6 +109,18 @@ def _handle_check(body):
 INDEX_PATH = os.path.join(SCRIPT_DIR, "index.html")
 
 
+class CyberBreachServer(HTTPServer):
+    # Allow immediate restart without "Address already in use" on all platforms
+    allow_reuse_address = True
+
+    def server_bind(self):
+        import socket
+        # On Windows, SO_EXCLUSIVEADDRUSE is safer than SO_REUSEADDR
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print(f"  {self.address_string()} - {fmt % args}")
@@ -176,9 +188,14 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    import argparse
+    parser = argparse.ArgumentParser(description="Cyber Breach game server")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8080)),
+                        help="Port to listen on (default: 8080)")
+    args = parser.parse_args()
+    port = args.port
     HTTPServer.allow_reuse_address = True
-    server = HTTPServer(("0.0.0.0", port), Handler)
+    server = CyberBreachServer(("0.0.0.0", port), Handler)
     print(f"\nCyber Breach server running at http://localhost:{port}/")
     print("Press Ctrl+C to stop.\n")
     try:
