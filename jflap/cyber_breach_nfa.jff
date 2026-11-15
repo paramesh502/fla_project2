@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cyber Breach — NFA (Nondeterministic Finite Automaton)
+  JFLAP 7.1 format
+
+  Alphabet: P (Ping), A (Auth), E (Encrypt), X (Proxy), L (Payload)
+  States: q0 (start), q1, q2, q3, q4 (accept), q5, q6, q7 (redundant)
+  ε-transitions: q0→q2, q1→q3, q5→q6
+
+  Designed to demonstrate:
+    1. Nondeterminism (q0 can go to q1 on P, or silently to q2 via ε)
+    2. ε-transitions (proxy/tunnel moves)
+    3. Subset construction required for determinism
+-->
+<structure>
+  <type>fa</type>
+  <automaton>
+    <!-- ============================================================ -->
+    <!-- States                                                        -->
+    <!-- ============================================================ -->
+    <state id="0" name="q0">
+      <x>100.0</x>
+      <y>200.0</y>
+      <initial/>
+    </state>
+    <state id="1" name="q1">
+      <x>250.0</x>
+      <y>100.0</y>
+    </state>
+    <state id="2" name="q2">
+      <x>250.0</x>
+      <y>300.0</y>
+    </state>
+    <state id="3" name="q3">
+      <x>400.0</x>
+      <y>200.0</y>
+    </state>
+    <state id="4" name="q4">
+      <x>550.0</x>
+      <y>200.0</y>
+      <final/>
+    </state>
+    <state id="5" name="q5">
+      <x>400.0</x>
+      <y>350.0</y>
+    </state>
+    <state id="6" name="q6">
+      <x>400.0</x>
+      <y>450.0</y>
+    </state>
+    <state id="7" name="q7">
+      <x>550.0</x>
+      <y>400.0</y>
+    </state>
+
+    <!-- ============================================================ -->
+    <!-- Transitions                                                   -->
+    <!-- ============================================================ -->
+    <!-- q0 transitions -->
+    <transition>
+      <from>0</from><to>1</to><read>P</read>
+    </transition>
+    <transition>
+      <from>0</from><to>2</to><read/>
+      <!-- empty <read/> = ε in JFLAP 7.1 -->
+    </transition>
+
+    <!-- q1 transitions -->
+    <transition>
+      <from>1</from><to>3</to><read>A</read>
+    </transition>
+    <transition>
+      <from>1</from><to>3</to><read/>
+    </transition>
+
+    <!-- q2 transitions -->
+    <transition>
+      <from>2</from><to>3</to><read>E</read>
+    </transition>
+    <transition>
+      <from>2</from><to>5</to><read>X</read>
+    </transition>
+
+    <!-- q3 transitions -->
+    <transition>
+      <from>3</from><to>4</to><read>L</read>
+    </transition>
+    <transition>
+      <from>3</from><to>3</to><read>P</read>
+    </transition>
+
+    <!-- q4 transitions (accept state stays accepting) -->
+    <transition>
+      <from>4</from><to>4</to><read>P</read>
+    </transition>
+    <transition>
+      <from>4</from><to>4</to><read>A</read>
+    </transition>
+
+    <!-- q5 transitions (redundant proxy path) -->
+    <transition>
+      <from>5</from><to>6</to><read/>
+    </transition>
+    <transition>
+      <from>5</from><to>7</to><read>P</read>
+    </transition>
+
+    <!-- q6 transitions -->
+    <transition>
+      <from>6</from><to>7</to><read>P</read>
+    </transition>
+
+    <!-- q7 transitions (mirrors q3) -->
+    <transition>
+      <from>7</from><to>4</to><read>L</read>
+    </transition>
+    <transition>
+      <from>7</from><to>7</to><read>P</read>
+    </transition>
+  </automaton>
+</structure>

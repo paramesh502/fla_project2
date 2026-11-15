@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cyber Breach — DFA (produced by NFA→DFA subset construction)
+  JFLAP 7.1 format
+
+  States (powerset labels):
+    D0 = {q0,q2}         START
+    D1 = {q1,q3}
+    D2 = {q3}
+    D3 = {q4}            ACCEPT
+    D4 = {q5,q6}
+    D5 = {q7}
+    DT = TRAP
+
+  Transition table:
+         P          A          E          L          X
+  D0  → D1       → DT       → D2       → DT       → D4
+  D1  → D2       → D2       → DT       → D3       → DT
+  D2  → D2       → DT       → DT       → D3       → DT
+  D3  → D3       → D3       → DT       → DT       → DT
+  D4  → D5       → DT       → DT       → DT       → DT
+  D5  → D5       → DT       → DT       → D3       → DT
+  DT  → DT       → DT       → DT       → DT       → DT
+-->
+<structure>
+  <type>fa</type>
+  <automaton>
+    <!-- States -->
+    <state id="0" name="D0">
+      <x>50.0</x><y>200.0</y><initial/>
+    </state>
+    <state id="1" name="D1">
+      <x>200.0</x><y>100.0</y>
+    </state>
+    <state id="2" name="D2">
+      <x>350.0</x><y>100.0</y>
+    </state>
+    <state id="3" name="D3">
+      <x>500.0</x><y>200.0</y>
+      <final/>
+    </state>
+    <state id="4" name="D4">
+      <x>200.0</x><y>350.0</y>
+    </state>
+    <state id="5" name="D5">
+      <x>350.0</x><y>350.0</y>
+    </state>
+    <state id="6" name="DT">
+      <x>350.0</x><y>500.0</y>
+    </state>
+
+    <!-- D0 transitions -->
+    <transition><from>0</from><to>1</to><read>P</read></transition>
+    <transition><from>0</from><to>6</to><read>A</read></transition>
+    <transition><from>0</from><to>2</to><read>E</read></transition>
+    <transition><from>0</from><to>6</to><read>L</read></transition>
+    <transition><from>0</from><to>4</to><read>X</read></transition>
+
+    <!-- D1 transitions -->
+    <transition><from>1</from><to>2</to><read>P</read></transition>
+    <transition><from>1</from><to>2</to><read>A</read></transition>
+    <transition><from>1</from><to>6</to><read>E</read></transition>
+    <transition><from>1</from><to>3</to><read>L</read></transition>
+    <transition><from>1</from><to>6</to><read>X</read></transition>
+
+    <!-- D2 transitions -->
+    <transition><from>2</from><to>2</to><read>P</read></transition>
+    <transition><from>2</from><to>6</to><read>A</read></transition>
+    <transition><from>2</from><to>6</to><read>E</read></transition>
+    <transition><from>2</from><to>3</to><read>L</read></transition>
+    <transition><from>2</from><to>6</to><read>X</read></transition>
+
+    <!-- D3 transitions (accept) -->
+    <transition><from>3</from><to>3</to><read>P</read></transition>
+    <transition><from>3</from><to>3</to><read>A</read></transition>
+    <transition><from>3</from><to>6</to><read>E</read></transition>
+    <transition><from>3</from><to>6</to><read>L</read></transition>
+    <transition><from>3</from><to>6</to><read>X</read></transition>
+
+    <!-- D4 transitions -->
+    <transition><from>4</from><to>5</to><read>P</read></transition>
+    <transition><from>4</from><to>6</to><read>A</read></transition>
+    <transition><from>4</from><to>6</to><read>E</read></transition>
+    <transition><from>4</from><to>6</to><read>L</read></transition>
+    <transition><from>4</from><to>6</to><read>X</read></transition>
+
+    <!-- D5 transitions -->
+    <transition><from>5</from><to>5</to><read>P</read></transition>
+    <transition><from>5</from><to>6</to><read>A</read></transition>
+    <transition><from>5</from><to>6</to><read>E</read></transition>
+    <transition><from>5</from><to>3</to><read>L</read></transition>
+    <transition><from>5</from><to>6</to><read>X</read></transition>
+
+    <!-- DT (trap) transitions -->
+    <transition><from>6</from><to>6</to><read>P</read></transition>
+    <transition><from>6</from><to>6</to><read>A</read></transition>
+    <transition><from>6</from><to>6</to><read>E</read></transition>
+    <transition><from>6</from><to>6</to><read>L</read></transition>
+    <transition><from>6</from><to>6</to><read>X</read></transition>
+  </automaton>
+</structure>

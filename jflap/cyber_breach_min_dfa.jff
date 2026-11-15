@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cyber Breach — Minimized DFA (Myhill-Nerode / table-filling)
+  JFLAP 7.1 format
+
+  Minimization merges equivalent DFA states:
+    DFA D2={q3} and D5={q7} both have identical future language
+    → merged into M2 = {q3,q7}
+
+  Before minimization: 7 states (D0,D1,D2,D3,D4,D5,DT)
+  After  minimization: 6 states (M0,M1,M2,M3,M4,MT)
+  Reduction: 1 state removed (≈ 14%)
+
+  State mapping:
+    M0 = D0 = {q0,q2}       START
+    M1 = D1 = {q1,q3}
+    M2 = D2∪D5 = {q3,q7}    MERGED
+    M3 = D3 = {q4}           ACCEPT
+    M4 = D4 = {q5,q6}
+    MT = DT = TRAP
+
+  Minimized transition table:
+         P      A      E      L      X
+  M0  → M1  → MT  → M2  → MT  → M4
+  M1  → M2  → M2  → MT  → M3  → MT
+  M2  → M2  → MT  → MT  → M3  → MT
+  M3  → M3  → M3  → MT  → MT  → MT
+  M4  → M2  → MT  → MT  → MT  → MT
+  MT  → MT  → MT  → MT  → MT  → MT
+
+  Distinguishability proof (table-filling):
+    Round 0 (base): M3 (accept) is distinguishable from all non-accept states.
+    Round 1: States that transition to distinguishable states on some symbol
+             become distinguishable.
+    Fixed point reached; D2 and D5 never become distinguishable → merged.
+-->
+<structure>
+  <type>fa</type>
+  <automaton>
+    <state id="0" name="M0">
+      <x>50.0</x><y>200.0</y><initial/>
+    </state>
+    <state id="1" name="M1">
+      <x>200.0</x><y>100.0</y>
+    </state>
+    <state id="2" name="M2">
+      <x>350.0</x><y>100.0</y>
+    </state>
+    <state id="3" name="M3">
+      <x>500.0</x><y>200.0</y>
+      <final/>
+    </state>
+    <state id="4" name="M4">
+      <x>200.0</x><y>350.0</y>
+    </state>
+    <state id="5" name="MT">
+      <x>350.0</x><y>350.0</y>
+    </state>
+
+    <!-- M0 transitions -->
+    <transition><from>0</from><to>1</to><read>P</read></transition>
+    <transition><from>0</from><to>5</to><read>A</read></transition>
+    <transition><from>0</from><to>2</to><read>E</read></transition>
+    <transition><from>0</from><to>5</to><read>L</read></transition>
+    <transition><from>0</from><to>4</to><read>X</read></transition>
+
+    <!-- M1 transitions -->
+    <transition><from>1</from><to>2</to><read>P</read></transition>
+    <transition><from>1</from><to>2</to><read>A</read></transition>
+    <transition><from>1</from><to>5</to><read>E</read></transition>
+    <transition><from>1</from><to>3</to><read>L</read></transition>
+    <transition><from>1</from><to>5</to><read>X</read></transition>
+
+    <!-- M2 transitions -->
+    <transition><from>2</from><to>2</to><read>P</read></transition>
+    <transition><from>2</from><to>5</to><read>A</read></transition>
+    <transition><from>2</from><to>5</to><read>E</read></transition>
+    <transition><from>2</from><to>3</to><read>L</read></transition>
+    <transition><from>2</from><to>5</to><read>X</read></transition>
+
+    <!-- M3 transitions (accept) -->
+    <transition><from>3</from><to>3</to><read>P</read></transition>
+    <transition><from>3</from><to>3</to><read>A</read></transition>
+    <transition><from>3</from><to>5</to><read>E</read></transition>
+    <transition><from>3</from><to>5</to><read>L</read></transition>
+    <transition><from>3</from><to>5</to><read>X</read></transition>
+
+    <!-- M4 transitions -->
+    <transition><from>4</from><to>2</to><read>P</read></transition>
+    <transition><from>4</from><to>5</to><read>A</read></transition>
+    <transition><from>4</from><to>5</to><read>E</read></transition>
+    <transition><from>4</from><to>5</to><read>L</read></transition>
+    <transition><from>4</from><to>5</to><read>X</read></transition>
+
+    <!-- MT (trap) transitions -->
+    <transition><from>5</from><to>5</to><read>P</read></transition>
+    <transition><from>5</from><to>5</to><read>A</read></transition>
+    <transition><from>5</from><to>5</to><read>E</read></transition>
+    <transition><from>5</from><to>5</to><read>L</read></transition>
+    <transition><from>5</from><to>5</to><read>X</read></transition>
+  </automaton>
+</structure>
