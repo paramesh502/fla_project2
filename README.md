@@ -4,6 +4,19 @@ A puzzle-strategy game in which a hacker infiltrates a secured network by
 sending sequences of data packets past a layered firewall modeled as an NFA,
 its equivalent DFA, and the minimized DFA.
 
+## Quick Start
+
+```bash
+git clone https://github.com/paramesh502/fla_project2.git
+cd fla_project2
+python3 server.py
+# Open http://localhost:8080 in your browser
+```
+
+No pip installs required — `server.py` uses Python standard library only.
+
+> For full gameplay instructions and viva Q&A see **[HOW_TO_RUN_AND_PLAY.md](HOW_TO_RUN_AND_PLAY.md)**
+
 ## Project Components
 
 | Component | Marks | Description |

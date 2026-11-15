@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Breach — FLA Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --bg3: #141420;
+    --border: #1e1e30;
+    --accent: #00ffcc;
+    --accent-dim: #00ffcc33;
+    --danger: #ff4444;
+    --danger-dim: #ff444422;
+    --warn: #ffaa00;
+    --warn-dim: #ffaa0022;
+    --text: #e0e0f0;
+    --text-muted: #707090;
+    --green: #00cc77;
+    --green-dim: #00cc7722;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* HEADER */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--danger);
+    text-shadow: 0 0 8px #ff444488, 0 0 16px #ff444444;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mission-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .btn-theory {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-theory:hover { border-color: var(--accent); color: var(--accent); }
+  /* LAYOUT */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 54px);
+  }
+  @media (max-width: 768px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .sidebar.open { display: block; }
+  }
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+  .sidebar-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0 16px 12px;
+    text-transform: uppercase;
+  }
+  .mission-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .mission-item:hover { background: var(--bg3); }
+  .mission-item.active {
+    background: var(--bg3);
+    border-left-color: var(--accent);
+  }
+  .mission-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .mission-item.active .mission-num { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .mission-name-sm {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.3;
+    flex: 1;
+  }
+  .check-icon { color: var(--green); font-size: 0.85rem; }
+  /* MAIN CONTENT */
+  .main-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+  }
+  /* MISSION CARD */
+  .mission-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .mission-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--accent); }
+  .mission-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+  .mission-hint {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--warn);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  /* STATUS BANNER */
+  .status-banner {
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text-muted);
+    transition: all 0.3s;
+  }
+  .status-banner.success {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .status-banner.danger {
+    background: var(--danger-dim);
+    border-color: var(--danger);
+    color: var(--danger);
+    animation: flash 0.6s infinite alternate;
+  }
+  @keyframes flash { from { opacity: 1; } to { opacity: 0.6; } }
+  /* DFA DIAGRAM */
+  .diagram-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow-x: auto;
+  }
+  .diagram-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  #dfa-svg { width: 100%; height: auto; min-height: 200px; }
+  @keyframes pulse-current {
+    0%, 100% { filter: drop-shadow(0 0 6px #ffdd00cc); }
+    50%        { filter: drop-shadow(0 0 14px #ffdd00ff); }
+  }
+  .state-current { animation: pulse-current 1s ease-in-out infinite; }
+  /* PACKETS */
+  .packets-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 600px) { .packets-grid { grid-template-columns: repeat(3, 1fr); } }
+  .packet-tile {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .packet-tile:hover { border-color: var(--accent); }
+  .packet-tile.selected {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .packet-sym {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .packet-tile.selected .packet-sym { color: #fff; }
+  .packet-name { font-size: 0.7rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .packet-desc { font-size: 0.62rem; color: var(--text-muted); line-height: 1.3; }
+  /* CONTROLS */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .btn-primary:hover { background: #00ffe0; }
+  .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+  .btn-toggle:hover { border-color: var(--warn); color: var(--warn); }
+  /* PACKET LOG */
+  .log-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .log-label { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-right: 4px; }
+  .log-badge {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .log-arrow { color: var(--text-muted); font-size: 0.75rem; }
+  /* TABLE */
+  .table-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: none;
+  }
+  .table-card.visible { display: block; }
+  .table-title { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+  .trans-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .trans-table th {
+    background: var(--bg3);
+    color: var(--text-muted);
+    padding: 7px 12px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+  .trans-table td {
+    padding: 7px 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .trans-table tr.row-accept td { background: var(--green-dim); color: var(--green); }
+  .trans-table tr.row-trap td { background: var(--danger-dim); color: var(--danger); }
+  .trans-table tr.row-current td { background: var(--warn-dim); color: var(--warn); }
+  /* THEORY MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0008;
+    z-index: 200;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 760px;
+    width: 100%;
+    position: relative;
+  }
+  .modal h2 { color: var(--accent); font-size: 1rem; margin-bottom: 16px; letter-spacing: 0.05em; }
+  .modal h3 { color: var(--text); font-size: 0.85rem; margin: 20px 0 8px; }
+  .modal p, .modal li { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 6px; }
+  .modal .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .modal .close-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .modal-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin: 8px 0 16px; overflow-x: auto; display: block; }
+  .modal-table th, .modal-table td {
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+  }
+  .modal-table th { background: var(--bg3); color: var(--text-muted); }
+  .modal-table td { color: var(--text-muted); }
+  /* MOBILE MENU */
+  .mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+  }
+  @media (max-width: 768px) { .mobile-menu-btn { display: block; } }
+  .mobile-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000a;
+    z-index: 150;
+  }
+  .mobile-sidebar-overlay.open { display: block; }
+  .mobile-sidebar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    z-index: 160;
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+  .mobile-sidebar.open { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">CYBER BREACH</div>
+  <div class="header-right">
+    <button class="mobile-menu-btn" id="menuBtn">☰ Missions</button>
+    <span class="mission-label" id="headerMissionLabel">Mission 1</span>
+    <button class="btn-theory" id="theoryBtn">⚡ Theory</button>
+  </div>
+</header>
+
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div class="mobile-sidebar-overlay" id="mobileOverlay"></div>
+<div class="mobile-sidebar" id="mobileSidebar">
+  <div class="sidebar-title">Missions</div>
+  <div id="mobileMissionList"></div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Missions</div>
+    <div id="missionList"></div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- MISSION INFO -->
+    <div class="mission-card">
+      <div class="mission-title" id="missionTitle">Loading…</div>
+      <div class="mission-desc" id="missionDesc"></div>
+      <div class="mission-hint" id="missionHint"></div>
+    </div>
+
+    <!-- STATUS BANNER -->
+    <div class="status-banner" id="statusBanner">Initialising…</div>
+
+    <!-- DFA DIAGRAM -->
+    <div class="diagram-card">
+      <div class="diagram-label">DFA State Diagram — Live</div>
+      <svg id="dfa-svg" viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <!-- PACKET SELECTOR -->
+    <div class="packets-grid" id="packetGrid"></div>
+
+    <!-- CONTROLS -->
+    <div class="controls-row">
+      <button class="btn btn-primary" id="sendBtn">▶ SEND</button>
+      <button class="btn btn-secondary" id="resetBtn">↺ RESET</button>
+      <button class="btn btn-toggle" id="tableBtn">📋 SHOW TABLE</button>
+    </div>
+
+    <!-- PACKET LOG -->
+    <div class="log-card" id="logCard">
+      <span class="log-label">Log</span>
+      <span id="logContent" style="color:var(--text-muted);font-size:0.78rem;">No packets sent yet.</span>
+    </div>
+
+    <!-- TRANSITION TABLE -->
+    <div class="table-card" id="tableCard">
+      <div class="table-title">Minimized DFA — Transition Table</div>
+      <div style="overflow-x:auto;"><table class="trans-table" id="transTable"></table></div>
+    </div>
+  </main>
+</div>
+
+<!-- THEORY MODAL -->
+<div class="modal-overlay" id="theoryModal">
+  <div class="modal">
+    <button class="close-btn" id="closeTheory">✕ Close</button>
+    <h2>⚡ Theory: NFA → DFA → Minimization</h2>
+    <h3>The Alphabet</h3>
+    <p>Five packet types form the input alphabet Σ = {P, A, E, X, L} (Ping, Auth, Encrypt, Proxy, Payload).</p>
+    <h3>NFA (8 states)</h3>
+    <p>The firewall is modelled as an NFA with ε-transitions (silent proxy moves that consume no input).</p>
+    <table class="modal-table">
+      <tr><th>State</th><th>P</th><th>A</th><th>E</th><th>X</th><th>L</th><th>ε</th></tr>
+      <tr><td>q0 (start)</td><td>{q1}</td><td>—</td><td>—</td><td>—</td><td>—</td><td>{q2}</td></tr>
+      <tr><td>q1</td><td>—</td><td>{q3}</td><td>—</td><td>—</td><td>—</td><td>{q3}</td></tr>
+      <tr><td>q2</td><td>—</td><td>—</td><td>{q3}</td><td>{q5}</td><td>—</td><td>—</td></tr>
+      <tr><td>q3</td><td>{q3}</td><td>—</td><td>—</td><td>—</td><td>{q4}</td><td>—</td></tr>
+      <tr><td>q4 ✓</td><td>{q4}</td><td>{q4}</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>q5</td><td>{q7}</td><td>—</td><td>—</td><td>—</td><td>—</td><td>{q6}</td></tr>
+      <tr><td>q6</td><td>{q7}</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>q7</td><td>{q7}</td><td>—</td><td>—</td><td>—</td><td>{q4}</td><td>—</td></tr>
+    </table>
+    <h3>DFA (7 states, subset construction)</h3>
+    <p>ε-closure({q0}) = {q0,q2}, so the DFA start state is {q0,q2}. Each DFA state is a subset of NFA states.</p>
+    <table class="modal-table" id="theoryDfaTable"></table>
+    <h3>Minimized DFA (Myhill-Nerode / table-filling)</h3>
+    <p>States with identical future behaviour are merged. D2={q3} and D5={q7} are indistinguishable → merged.</p>
+    <table class="modal-table" id="theoryMinDfaTable"></table>
+    <h3>What the States Mean</h3>
+    <p><strong style="color:var(--accent)">Start state {q0,q2}</strong>: firewall entry. ε-closure includes q2 (the proxy tunnel).</p>
+    <p><strong style="color:var(--green)">Accept state {q4}</strong>: server reached — BREACH SUCCESSFUL.</p>
+    <p><strong style="color:var(--danger)">TRAP</strong>: intrusion alarm triggered. Absorbing — no recovery.</p>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let automaton = null;   // { nfa, dfa, min_dfa }
+let missions = [];      // array of mission objects
+let activeMission = 0;  // index into missions[]
+let completed = new Set();
+let currentState = null;
+let sequence = [];
+let selectedPacket = null;
+let tableVisible = false;
+
+const PACKETS = [
+  { sym: 'P', name: 'Ping',    desc: 'Test the connection' },
+  { sym: 'A', name: 'Auth',    desc: 'Send authentication' },
+  { sym: 'E', name: 'Encrypt', desc: 'Open encrypted channel' },
+  { sym: 'X', name: 'Proxy',   desc: 'Bounce through proxy' },
+  { sym: 'L', name: 'Payload', desc: 'Drop the final payload' },
+];
+
+// ============================================================
+// BOOT
+// ============================================================
+async function init() {
+  try {
+    const [autoRes, missRes] = await Promise.all([
+      fetch('/api/automaton'),
+      fetch('/api/missions'),
+    ]);
+    automaton = await autoRes.json();
+    missions  = await missRes.json();
+    buildUI();
+    setMission(0);
+  } catch(e) {
+    document.getElementById('statusBanner').textContent = 'Error loading game data: ' + e.message;
+    document.getElementById('statusBanner').className = 'status-banner danger';
+  }
+}
+
+// ============================================================
+// BUILD STATIC UI ELEMENTS
+// ============================================================
+function buildUI() {
+  buildMissionList('missionList');
+  buildMissionList('mobileMissionList');
+  buildPacketGrid();
+  buildTransitionTable();
+  buildTheoryTables();
+
+  document.getElementById('sendBtn').addEventListener('click', doSend);
+  document.getElementById('resetBtn').addEventListener('click', doReset);
+  document.getElementById('tableBtn').addEventListener('click', toggleTable);
+  document.getElementById('theoryBtn').addEventListener('click', () => {
+    document.getElementById('theoryModal').classList.add('open');
+  });
+  document.getElementById('closeTheory').addEventListener('click', () => {
+    document.getElementById('theoryModal').classList.remove('open');
+  });
+  document.getElementById('menuBtn').addEventListener('click', openMobileMenu);
+  document.getElementById('mobileOverlay').addEventListener('click', closeMobileMenu);
+  document.addEventListener('keydown', handleKey);
+}
+
+function buildMissionList(containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  missions.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'mission-item' + (i === activeMission ? ' active' : '');
+    div.dataset.idx = i;
+    div.innerHTML = `
+      <div class="mission-num">${m.id}</div>
+      <div class="mission-name-sm">${'Mission ' + m.id}</div>
+      ${completed.has(i) ? '<span class="check-icon">✓</span>' : ''}
+    `;
+    div.addEventListener('click', () => { setMission(i); closeMobileMenu(); });
+    el.appendChild(div);
+  });
+}
+
+function buildPacketGrid() {
+  const grid = document.getElementById('packetGrid');
+  grid.innerHTML = '';
+  PACKETS.forEach(p => {
+    const tile = document.createElement('div');
+    tile.className = 'packet-tile' + (selectedPacket === p.sym ? ' selected' : '');
+    tile.dataset.sym = p.sym;
+    tile.innerHTML = `
+      <div class="packet-sym">${p.sym}</div>
+      <div class="packet-name">${p.name}</div>
+      <div class="packet-desc">${p.desc}</div>
+    `;
+    tile.addEventListener('click', () => selectPacket(p.sym));
+    grid.appendChild(tile);
+  });
+}
+
+function buildTransitionTable() {
+  if (!automaton) return;
+  const dfa = automaton.min_dfa;
+  const alpha = dfa.alphabet;
+  const table = document.getElementById('transTable');
+  let html = `<thead><tr><th>State</th>${alpha.map(a => `<th>${a}</th>`).join('')}</tr></thead><tbody>`;
+  dfa.states.forEach(state => {
+    const isAccept = dfa.accept.includes(state);
+    const isTrap   = state === dfa.trap_state || state === 'TRAP';
+    const cls = isAccept ? 'row-accept' : (isTrap ? 'row-trap' : '');
+    const marker = isAccept ? ' ✓' : (isTrap ? ' ⚠' : '');
+    html += `<tr class="${cls}" data-state="${state}">`;
+    html += `<td>${state}${marker}</td>`;
+    alpha.forEach(a => {
+      const t = (dfa.transitions[state] || {})[a] || 'TRAP';
+      html += `<td>${t}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function buildTheoryTables() {
+  if (!automaton) return;
+  renderTheoryDfaTable(automaton.dfa,     'theoryDfaTable');
+  renderTheoryDfaTable(automaton.min_dfa, 'theoryMinDfaTable');
+}
+
+function renderTheoryDfaTable(dfa, id) {
+  const alpha = dfa.alphabet;
+  let html = `<tr><th>State</th>${alpha.map(a=>`<th>${a}</th>`).join('')}</tr>`;
+  dfa.states.forEach(state => {
+    const isAccept = dfa.accept.includes(state);
+    const isTrap   = state === dfa.trap_state || state === 'TRAP';
+    const marker = isAccept ? ' ✓' : (isTrap ? ' ⚠' : '');
+    html += `<tr><td>${state}${marker}</td>`;
+    alpha.forEach(a => { html += `<td>${(dfa.transitions[state]||{})[a]||'TRAP'}</td>`; });
+    html += '</tr>';
+  });
+  document.getElementById(id).innerHTML = html;
+}
+
+// ============================================================
+// MISSION
+// ============================================================
+function setMission(idx) {
+  activeMission = idx;
+  const m = missions[idx];
+  document.getElementById('missionTitle').textContent = m.name;
+  document.getElementById('missionDesc').textContent = m.description;
+  document.getElementById('missionHint').innerHTML = `💡 ${m.hint}`;
+  document.getElementById('headerMissionLabel').textContent = 'Mission ' + m.id;
+  buildMissionList('missionList');
+  buildMissionList('mobileMissionList');
+  doReset();
+}
+
+// ============================================================
+// GAME ACTIONS
+// ============================================================
+function selectPacket(sym) {
+  selectedPacket = sym;
+  buildPacketGrid();
+}
+
+async function doSend() {
+  if (!selectedPacket) return;
+  const dfa = automaton.dfa;
+  const res = await fetch('/api/step', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ state: currentState, packet: selectedPacket }),
+  });
+  const data = await res.json();
+  sequence.push(selectedPacket);
+  currentState = data.next_state;
+  updateLog();
+  updateStatus(data);
+  drawDFA();
+  updateTableHighlight();
+  if (data.accepted && !completed.has(activeMission)) {
+    completed.add(activeMission);
+    buildMissionList('missionList');
+    buildMissionList('mobileMissionList');
+  }
+}
+
+function doReset() {
+  if (!automaton) return;
+  currentState  = automaton.dfa.start;
+  sequence      = [];
+  selectedPacket = null;
+  buildPacketGrid();
+  updateLog();
+  updateStatus({ accepted: false, trapped: false });
+  drawDFA();
+  updateTableHighlight();
+}
+
+function toggleTable() {
+  tableVisible = !tableVisible;
+  const card = document.getElementById('tableCard');
+  const btn  = document.getElementById('tableBtn');
+  card.classList.toggle('visible', tableVisible);
+  btn.textContent = tableVisible ? '📋 HIDE TABLE' : '📋 SHOW TABLE';
+}
+
+// ============================================================
+// UI UPDATES
+// ============================================================
+function updateLog() {
+  const el = document.getElementById('logContent');
+  if (sequence.length === 0) {
+    el.innerHTML = '<span style="color:var(--text-muted);font-size:0.78rem;">No packets sent yet.</span>';
+    return;
+  }
+  el.innerHTML = sequence.map((s, i) =>
+    (i > 0 ? '<span class="log-arrow">→</span>' : '') +
+    `<span class="log-badge">${s}</span>`
+  ).join('');
+}
+
+function updateStatus(data) {
+  const banner = document.getElementById('statusBanner');
+  const sendBtn = document.getElementById('sendBtn');
+  if (data.accepted) {
+    banner.className = 'status-banner success';
+    banner.textContent = 'BREACH SUCCESSFUL 🎯';
+  } else if (data.trapped) {
+    banner.className = 'status-banner danger';
+    banner.textContent = '🚨 INTRUSION ALARM — TRACED';
+    sendBtn.disabled = true;
+    return;
+  } else {
+    banner.className = 'status-banner';
+    banner.textContent = 'Current state: ' + currentState;
+  }
+  sendBtn.disabled = false;
+}
+
+function updateTableHighlight() {
+  document.querySelectorAll('#transTable tr[data-state]').forEach(row => {
+    const state = row.dataset.state;
+    const isAccept = automaton.min_dfa.accept.includes(state);
+    const isTrap   = state === automaton.min_dfa.trap_state || state === 'TRAP';
+    // Map DFA current state to min-DFA state (approximate: show all as normal)
+    row.classList.remove('row-current');
+    if (state === currentState) row.classList.add('row-current');
+    else if (isAccept) row.classList.add('row-accept');
+    else if (isTrap)   row.classList.add('row-trap');
+  });
+}
+
+// ============================================================
+// SVG DFA DIAGRAM
+// ============================================================
+function drawDFA() {
+  if (!automaton) return;
+  const dfa = automaton.dfa;
+  const svg = document.getElementById('dfa-svg');
+  svg.innerHTML = '';
+
+  const states = dfa.states;
+  const n = states.length;
+  const W = 820, H = 220;
+  const cx = W / 2, cy = H / 2;
+  const rx = 340, ry = 80;
+  // Arrange states in an ellipse
+  const stateOrder = orderStates(dfa);
+  const pos = {};
+  stateOrder.forEach((s, i) => {
+    const angle = (2 * Math.PI * i / stateOrder.length) - Math.PI / 2;
+    pos[s] = { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+  });
+
+  // Define arrowhead marker
+  const defs = makeSVG('defs');
+  const marker = makeSVG('marker');
+  marker.setAttribute('id', 'arrow');
+  marker.setAttribute('markerWidth', '8');
+  marker.setAttribute('markerHeight', '8');
+  marker.setAttribute('refX', '6');
+  marker.setAttribute('refY', '3');
+  marker.setAttribute('orient', 'auto');
+  const path = makeSVG('path');
+  path.setAttribute('d', 'M0,0 L0,6 L8,3 z');
+  path.setAttribute('fill', '#505070');
+  marker.appendChild(path);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+
+  // Draw transitions (grouped by pair to avoid overlapping)
+  const drawn = {};
+  dfa.states.forEach(from => {
+    const symsTo = {};
+    dfa.alphabet.forEach(sym => {
+      const to = (dfa.transitions[from] || {})[sym] || 'TRAP';
+      (symsTo[to] = symsTo[to] || []).push(sym);
+    });
+    Object.entries(symsTo).forEach(([to, syms]) => {
+      if (!pos[from] || !pos[to]) return;
+      const label = syms.join(',');
+      drawArrow(svg, pos[from], pos[to], label, from === to, drawn, from + '→' + to);
+    });
+  });
+
+  // Draw states
+  stateOrder.forEach(s => {
+    if (!pos[s]) return;
+    const { x, y } = pos[s];
+    const isAccept  = dfa.accept.includes(s);
+    const isTrap    = s === dfa.trap_state || s === 'TRAP';
+    const isCurrent = s === currentState;
+    const isStart   = s === dfa.start;
+
+    const g = makeSVG('g');
+    if (isCurrent) g.setAttribute('class', 'state-current');
+
+    const circle = makeSVG('circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', 26);
+    circle.setAttribute('fill', isCurrent ? '#2a2a00' : (isAccept ? '#002a1a' : (isTrap ? '#2a0000' : '#0f0f1a')));
+    circle.setAttribute('stroke', isCurrent ? '#ffdd00' : (isAccept ? '#00cc77' : (isTrap ? '#ff4444' : '#2a2a40')));
+    circle.setAttribute('stroke-width', isCurrent ? '3' : '2');
+    g.appendChild(circle);
+
+    if (isAccept) {
+      const inner = makeSVG('circle');
+      inner.setAttribute('cx', x);
+      inner.setAttribute('cy', y);
+      inner.setAttribute('r', 21);
+      inner.setAttribute('fill', 'none');
+      inner.setAttribute('stroke', '#00cc77');
+      inner.setAttribute('stroke-width', '1');
+      g.appendChild(inner);
+    }
+
+    // Start arrow
+    if (isStart) {
+      const arrow = makeSVG('line');
+      arrow.setAttribute('x1', x - 44);
+      arrow.setAttribute('y1', y);
+      arrow.setAttribute('x2', x - 27);
+      arrow.setAttribute('y2', y);
+      arrow.setAttribute('stroke', '#505070');
+      arrow.setAttribute('stroke-width', '1.5');
+      arrow.setAttribute('marker-end', 'url(#arrow)');
+      svg.appendChild(arrow);
+    }
+
+    // Label
+    const shortLabel = shortStateName(s);
+    const text = makeSVG('text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y + 4);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-family', 'Courier New, monospace');
+    text.setAttribute('font-size', '9');
+    text.setAttribute('fill', isCurrent ? '#ffdd00' : (isAccept ? '#00cc77' : (isTrap ? '#ff4444' : '#a0a0c0')));
+    text.textContent = shortLabel;
+    g.appendChild(text);
+
+    svg.appendChild(g);
+  });
+}
+
+function makeSVG(tag) {
+  return document.createElementNS('http://www.w3.org/2000/svg', tag);
+}
+
+function orderStates(dfa) {
+  // BFS from start for a natural order
+  const order = [];
+  const visited = new Set();
+  const queue = [dfa.start];
+  while (queue.length) {
+    const s = queue.shift();
+    if (visited.has(s)) continue;
+    visited.add(s);
+    order.push(s);
+    dfa.alphabet.forEach(sym => {
+      const t = (dfa.transitions[s] || {})[sym] || 'TRAP';
+      if (!visited.has(t)) queue.push(t);
+    });
+  }
+  // Add any unvisited (TRAP etc)
+  dfa.states.forEach(s => { if (!visited.has(s)) order.push(s); });
+  return order;
+}
+
+function shortStateName(s) {
+  if (s === 'TRAP') return 'TRAP';
+  // Extract NFA states from {q0,q2} style
+  const inner = s.replace(/[{}]/g, '');
+  if (inner.length > 10) return inner.substring(0, 9) + '…';
+  return inner;
+}
+
+function drawArrow(svg, from, to, label, isSelf, drawn, key) {
+  const r = 26;
+  if (isSelf) {
+    // Self-loop arc above the state
+    const lx = from.x, ly = from.y - r;
+    const arc = makeSVG('path');
+    arc.setAttribute('d', `M${lx-14},${ly} C${lx-28},${ly-32} ${lx+28},${ly-32} ${lx+14},${ly}`);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', '#303050');
+    arc.setAttribute('stroke-width', '1.2');
+    arc.setAttribute('marker-end', 'url(#arrow)');
+    svg.insertBefore(arc, svg.firstChild);
+    const t = makeSVG('text');
+    t.setAttribute('x', lx);
+    t.setAttribute('y', ly - 28);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('font-size', '8');
+    t.setAttribute('fill', '#505070');
+    t.setAttribute('font-family', 'Courier New, monospace');
+    t.textContent = label;
+    svg.insertBefore(t, svg.firstChild);
+    return;
+  }
+  // Direction
+  const dx = to.x - from.x, dy = to.y - from.y;
+  const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+  const ux = dx/dist, uy = dy/dist;
+  // Check reverse key
+  const revKey = to.x + ',' + to.y + '→' + from.x + ',' + from.y;
+  const offset = drawn[revKey] ? 18 : 0;
+  drawn[key] = true;
+
+  const sx = from.x + ux*r + (-uy)*offset;
+  const sy = from.y + uy*r + ux*offset;
+  const ex = to.x - ux*r + (-uy)*offset;
+  const ey = to.y - uy*r + ux*offset;
+  const mx = (sx+ex)/2 + (-uy)*20;
+  const my = (sy+ey)/2 + ux*20;
+
+  const curve = makeSVG('path');
+  curve.setAttribute('d', `M${sx},${sy} Q${mx},${my} ${ex},${ey}`);
+  curve.setAttribute('fill', 'none');
+  curve.setAttribute('stroke', '#303050');
+  curve.setAttribute('stroke-width', '1.2');
+  curve.setAttribute('marker-end', 'url(#arrow)');
+  svg.insertBefore(curve, svg.firstChild);
+
+  const t = makeSVG('text');
+  t.setAttribute('x', mx);
+  t.setAttribute('y', my - 3);
+  t.setAttribute('text-anchor', 'middle');
+  t.setAttribute('font-size', '7.5');
+  t.setAttribute('fill', '#505070');
+  t.setAttribute('font-family', 'Courier New, monospace');
+  t.textContent = label;
+  svg.insertBefore(t, svg.firstChild);
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+function handleKey(e) {
+  if (document.getElementById('theoryModal').classList.contains('open')) {
+    if (e.key === 'Escape') document.getElementById('theoryModal').classList.remove('open');
+    return;
+  }
+  const sym = e.key.toUpperCase();
+  if (['P','A','E','X','L'].includes(sym)) { selectPacket(sym); return; }
+  if (e.key === 'Enter') { doSend(); return; }
+  if (e.key === 'r' || e.key === 'R') { doReset(); return; }
+  if (e.key === 't' || e.key === 'T') { toggleTable(); return; }
+  if (e.key === 'Escape') { closeMobileMenu(); return; }
+}
+
+// ============================================================
+// MOBILE MENU
+// ============================================================
+function openMobileMenu() {
+  document.getElementById('mobileSidebar').classList.add('open');
+  document.getElementById('mobileOverlay').classList.add('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobileSidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+}
+
+// ============================================================
+// START
+// ============================================================
+init();
+</script>
+</body>
+</html>
