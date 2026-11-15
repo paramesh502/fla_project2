@@ -110,14 +110,24 @@ INDEX_PATH = os.path.join(SCRIPT_DIR, "index.html")
 
 
 class CyberBreachServer(HTTPServer):
-    # Allow immediate restart without "Address already in use" on all platforms
-    allow_reuse_address = True
+    # Disable SO_REUSEADDR globally — we handle socket options ourselves
+    # Windows rejects SO_REUSEADDR on TCP sockets (WinError 10022)
+    allow_reuse_address = False
 
     def server_bind(self):
         import socket
-        # On Windows, SO_EXCLUSIVEADDRUSE is safer than SO_REUSEADDR
-        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        if sys.platform == "win32":
+            # Windows: use SO_EXCLUSIVEADDRUSE to prevent port hijacking;
+            # do NOT set SO_REUSEADDR — it is invalid on Windows TCP sockets
+            try:
+                self.socket.setsockopt(
+                    socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1
+                )
+            except (AttributeError, OSError):
+                pass  # older Windows builds may not have this constant
+        else:
+            # macOS / Linux: SO_REUSEADDR is fine and prevents "address in use"
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         super().server_bind()
 
 
@@ -194,7 +204,7 @@ if __name__ == "__main__":
                         help="Port to listen on (default: 8080)")
     args = parser.parse_args()
     port = args.port
-    HTTPServer.allow_reuse_address = True
+    HTTPServer.allow_reuse_address = False
     server = CyberBreachServer(("0.0.0.0", port), Handler)
     print(f"\nCyber Breach server running at http://localhost:{port}/")
     print("Press Ctrl+C to stop.\n")
